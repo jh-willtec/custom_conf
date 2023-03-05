@@ -3,7 +3,8 @@ from typing import Any
 
 
 INVALID_CONFIG_EXIT_CODE = 1
-# TODO: All exceptions should be allowed to be raised without arguments.
+# TODO: Bind the arguments the exceptions were called with to the
+#  instance, to make them available to error handling.
 
 
 class PropertyError(Exception):
