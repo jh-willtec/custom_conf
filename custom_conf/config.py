@@ -35,6 +35,7 @@ class InstanceDescriptorMixin:
 
 
 def list_configs(directory: Path) -> list[Path]:
+    """ List all config files in the given directory. """
     if not directory.is_dir():
         logger.warning(f"Could not find configuration files in "
                        f"{directory}, because it is not a directory.")
@@ -43,6 +44,7 @@ def list_configs(directory: Path) -> list[Path]:
 
 
 class BaseConfig(InstanceDescriptorMixin):
+    """ Basic config without any properties. """
     def __init__(self, load_default=False, load_all=False) -> None:
         self._create_config_dir()
         self.properties = []
@@ -142,7 +144,7 @@ class BaseConfig(InstanceDescriptorMixin):
             try:
                 if key not in self.properties:
                     logger.error(f"Invalid config key: {key}")
-                    raise err.UnknownPropertyError(key, value)
+                    raise err.UnknownPropertyError(name=key, value=value)
                 setattr(self, key, value)
             except err.PropertyError:
                 valid = False
@@ -168,6 +170,7 @@ class BaseConfig(InstanceDescriptorMixin):
     @property
     @abstractmethod
     def config_dir(self) -> Path:
+        """ The path to the directory, which holds additional config files. """
         pass
 
     @property

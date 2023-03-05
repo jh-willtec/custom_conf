@@ -50,7 +50,7 @@ class NestedTypeProperty(Property):
         try:
             self._validate_generic_type(value, self.type)
         except err.InvalidPropertyTypeError:
-            raise err.InvalidPropertyTypeError(self, type(value))
+            raise err.InvalidPropertyTypeError(prop=self, type=type(value))
 
     def _validate_generic_type(self, value: Any, typ: type) -> None:
         # TODO: Document this properly.

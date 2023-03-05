@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def read_yaml(path: Path) -> tuple[dict[str, Any], bool]:
+    """ Read the .yaml file at the given path. """
     try:
         with open(path, encoding="utf-8") as config_file:
             return safe_load(config_file), True

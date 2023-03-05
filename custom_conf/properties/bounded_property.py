@@ -26,7 +26,7 @@ class BoundedProperty(Property):
             raise err.MissingBoundsError
         # Check that type is indeed a type.
         if not isinstance(self.type, type):
-            raise err.NotATypeError(self.type)
+            raise err.NotATypeError(type=self.type)
         # Check if the type is comparable.
         try:
             # noinspection PyStatementEffect
@@ -34,22 +34,22 @@ class BoundedProperty(Property):
             # noinspection PyStatementEffect
             upper_exists and self.upper < self.upper
         except TypeError:
-            raise err.IncomparableBoundsTypeError(self.type)
+            raise err.IncomparableBoundsTypeError(type=self.type)
         # Bounds need to be of the same type as the excepted property type.
         if lower_exists and not isinstance(self.lower, self.type):
-            raise err.InvalidLowerBoundsError(self.type, self.lower)
+            raise err.InvalidLowerBoundsError(type=self.type, value=self.lower)
         if upper_exists and not isinstance(self.upper, self.type):
-            raise err.InvalidUpperBoundsError(self.type, self.lower)
+            raise err.InvalidUpperBoundsError(type=self.type, value=self.lower)
         # Check that lower is lower than upper
         if lower_exists and upper_exists and self.lower >= self.upper:
-            raise err.InvalidBoundOrderError(self)
+            raise err.InvalidBoundOrderError(prop=self)
 
     def _validate_within_bounds(self, value: Any):
         """ Check if the given value is between the bounds. """
         upper_oob = self.upper is not None and value > self.upper
         lower_oob = self.lower is not None and value < self.lower
         if upper_oob or lower_oob:
-            raise err.OutOfBoundsPropertyError(self, value)
+            raise err.OutOfBoundsPropertyError(prop=self, value=value)
 
     def validate(self, value: Any) -> None:
         """ Checks if the value is within bounds. """

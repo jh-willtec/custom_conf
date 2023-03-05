@@ -1,16 +1,9 @@
 """ Exceptions raised by properties. """
-from typing import Any, TypeVar, TYPE_CHECKING
-
-
-if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences
-    from properties.property import Property
-    # noinspection PyUnresolvedReferences
-    from properties.bounded_property import BoundedProperty
+from typing import Any
 
 
 INVALID_CONFIG_EXIT_CODE = 1
-P = TypeVar("P", bound="Property")
+# TODO: All exceptions should be allowed to be raised without arguments.
 
 
 class PropertyError(Exception):
@@ -40,35 +33,73 @@ class MismatchedPropertyNameError(PropertyError):
 
 
 class InvalidPropertyTypeError(PropertyError):
-    """ Raised, if the type of a value differs from the properties type. """
-    def __init__(self, prop: P = None, value_type: type = None) -> None:
-        msg = ""
-        if prop is not None:
-            msg = (f"Invalid config type for property '{prop.name}'. "
-                   f"Expected '{prop.type}', got '{value_type}' instead.")
+    def __init__(self, **kwargs) -> None:
+        """ Raised, if the type of a value differs from the properties type.
+
+        :keyword prop: The property that is being set.
+        :type prop: Property
+        :keyword type: The type of the value.
+        :type type: type
+        """
+        if "prop" not in kwargs or "type" not in kwargs:
+            super().__init__()
+            return
+        prop = kwargs["prop"]
+        value_type = kwargs["type"]
+        msg = (f"Invalid config type for property '{prop.name}'. "
+               f"Expected '{prop.type}', got '{value_type}' instead.")
         super().__init__(msg)
 
 
 class NotATypeError(PropertyError):
-    def __init__(self, typ: Any) -> None:
-        super().__init__(f"The provided type '{typ}' is not a type.")
+    def __init__(self, **kwargs) -> None:
+        """
+        Raised, when the type provided to a property is not a type.
+
+        :keyword type: The object that was provided as a type for the property.
+        """
+        if "type" not in kwargs:
+            super().__init__()
+            return
+        prop_type = kwargs["type"]
+        super().__init__(f"The provided type '{prop_type}' is not a type.")
 
 
 class MissingRequiredPropertyError(PropertyError):
-    """ Raised, if a required property is missing.
-    Currently all properties are required. """
-    def __init__(self, prop: P):
+    def __init__(self, **kwargs) -> None:
+        """ Raised, if a required property is missing.
+        Currently all properties are required.
+
+        :keyword prop: The property object that is missing a value.
+        :type prop: A Property object
+        """
+        if "prop" not in kwargs:
+            super().__init__()
+            return
+        prop = kwargs["prop"]
         # TODO: Make a difference between Missing and QueryBeforeSet?
-        msg = (f"The property '{prop}' was not set before it was first "
+        msg = (f"The property '{prop.name}' was not set before it was first "
                f"queried, even though it is a required property.")
         super().__init__(msg)
 
 
 class UnknownPropertyError(PropertyError):
-    """ Raised, when trying to set a property that does not exist.
-    Usually this happens, when the name was missspelled. """
-    def __init__(self, key: str, value: Any) -> None:
-        msg = f"An unknown property with the name '{key}' was requested."
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when trying to set a property that does not exist.
+        Usually this happens, when the name was missspelled.
+
+        :keyword name: The name of the requested property.
+        :type name: str
+        :keyword value: The value the requested property would be set to.
+        :type value: Any
+        """
+        if "key" not in kwargs or "value" not in kwargs:
+            super().__init__()
+            return
+        key = kwargs["key"]
+        value = kwargs["value"]
+        msg = (f"An unknown property with the name '{key}' and "
+               f"value '{value}' was requested.")
         super().__init__(msg)
 
 
@@ -77,12 +108,20 @@ class UnknownPropertyError(PropertyError):
 ###########################
 
 
-BP = TypeVar("BP", bound="BoundedProperty")
-
-
 class OutOfBoundsPropertyError(PropertyError):
-    """ Raised, if the given value of a bounded property is out of bounds. """
-    def __init__(self, prop: BP, value: Any) -> None:
+    def __init__(self, **kwargs) -> None:
+        """ Raised, if the given value of a bounded property is out of bounds.
+
+        :keyword prop: The property that is being modified.
+        :type prop: BoundedProperty
+        :keyword value: The value the property is being set to.
+        :type value: The type of the property (prop.type)
+        """
+        if "prop" not in kwargs or "value" not in kwargs:
+            super().__init__()
+            return
+        prop = kwargs["prop"]
+        value = kwargs["value"]
         prop_type_name = prop.__class__.__name__
         msg = (f"The given value '{value}' for the {prop_type_name} "
                f"'{prop.name}' is out of bounds [{prop.lower}, {prop.upper}].")
@@ -90,7 +129,16 @@ class OutOfBoundsPropertyError(PropertyError):
 
 
 class IncomparableBoundsTypeError(PropertyError):
-    def __init__(self, typ: type) -> None:
+    def __init__(self, **kwargs) -> None:
+        """ Raised when values with the properties type can not be compared.
+
+        :keyword type: The type of the property that can not be compared.
+        :type type: type
+        """
+        if "type" not in kwargs:
+            super().__init__()
+            return
+        typ = kwargs["type"]
         msg = (f"The given type '{typ}' is not comparable and can thus not "
                f"be used as bounds.")
         super().__init__(msg)
@@ -98,6 +146,7 @@ class IncomparableBoundsTypeError(PropertyError):
 
 class MissingBoundsError(PropertyError):
     def __init__(self) -> None:
+        """ Raised when neither the lower nor upper bound were provided. """
         super().__init__("Either the lower or the upper bound is required!")
 
 
@@ -109,17 +158,49 @@ class _InvalidBoundsError(PropertyError):
 
 
 class InvalidLowerBoundsError(_InvalidBoundsError):
-    def __init__(self, expected_type: type, value: Any) -> None:
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when the lower bound is of the wrong type.
+
+        :keyword type: The type that is expected.
+        :type type: type
+        :keyword value: The value that was provided as lower bound.
+        :type value: Any
+        """
+        if "type" not in kwargs or "value" not in kwargs:
+            super(Exception, self).__init__()
+            return
+        expected_type = kwargs["type"]
+        value = kwargs["value"]
         super().__init__("lower", expected_type, value)
 
 
 class InvalidUpperBoundsError(_InvalidBoundsError):
-    def __init__(self, expected_type: type, value: Any) -> None:
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when the upper bound is of the wrong type.
+
+        :keyword type: The type that is expected.
+        :type type: type
+        :keyword value: The value that was provided as upper bound.
+        :type value: Any
+        """
+        if "type" not in kwargs or "value" not in kwargs:
+            super(Exception, self).__init__()
+            return
+        expected_type = kwargs["type"]
+        value = kwargs["value"]
         super().__init__("upper", expected_type, value)
 
 
 class InvalidBoundOrderError(PropertyError):
-    def __init__(self, name) -> None:
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when the lower bound is greater to the upper bound.
+
+        :keyword name: The name of the property with wrong bounds.
+        :type name: str
+        """
+        if "name" not in kwargs:
+            super().__init__()
+            return
+        name = kwargs["name"]
         super().__init__(f"The lower bound of the '{name}' property is "
                          f"greater or equal to the upper bound.")
-

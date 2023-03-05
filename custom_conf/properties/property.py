@@ -30,19 +30,19 @@ class Property:
         try:
             return getattr(obj, self.attr)
         except AttributeError:
-            raise err.MissingRequiredPropertyError
+            raise err.MissingRequiredPropertyError(prop=self)
 
     def __set__(self, obj, value: Any):
         self.validate(value)
         setattr(obj, self.attr, value)
 
     def _raise_type_error(self, typ: type) -> None:
-        raise err.InvalidPropertyTypeError(self, typ)
+        raise err.InvalidPropertyTypeError(prop=self, type=typ)
 
     def _validate_type(self, value: Any) -> None:
         if isinstance(value, self.type):
             return
-        raise err.InvalidPropertyTypeError(self, type(value))
+        raise err.InvalidPropertyTypeError(prop=self, type=type(value))
 
     def validate(self, value: Any) -> None:
         """ Check if there are any obvious errors with the value. """
