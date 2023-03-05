@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-import errors as err
-from properties.property import Property
+import custom_conf.errors as err
+from custom_conf.properties.property import Property
 
 
 class BoundedProperty(Property):
@@ -18,11 +18,15 @@ class BoundedProperty(Property):
 
     def _validate_init_values(self) -> None:
         """ Check if the given bounds and type are valid bound values. """
+        # TODO: Allow types to be converted?
         # Check at least one of lower/upper is given.
         lower_exists = self.lower is not None
         upper_exists = self.upper is not None
         if not lower_exists and not upper_exists:
             raise err.MissingBoundsError
+        # Check that type is indeed a type.
+        if not isinstance(self.type, type):
+            raise err.NotATypeError(self.type)
         # Check if the type is comparable.
         try:
             # noinspection PyStatementEffect
@@ -32,10 +36,13 @@ class BoundedProperty(Property):
         except TypeError:
             raise err.IncomparableBoundsTypeError(self.type)
         # Bounds need to be of the same type as the excepted property type.
-        if self.lower is not None and not isinstance(self.type, self.lower):
+        if lower_exists and not isinstance(self.lower, self.type):
             raise err.InvalidLowerBoundsError(self.type, self.lower)
-        if self.upper is not None and not isinstance(self.type, self.upper):
+        if upper_exists and not isinstance(self.upper, self.type):
             raise err.InvalidUpperBoundsError(self.type, self.lower)
+        # Check that lower is lower than upper
+        if lower_exists and upper_exists and self.lower >= self.upper:
+            raise err.InvalidBoundOrderError(self)
 
     def _validate_within_bounds(self, value: Any):
         """ Check if the given value is between the bounds. """

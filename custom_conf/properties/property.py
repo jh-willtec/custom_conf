@@ -6,16 +6,14 @@ need to hard-code each property.
 
 from __future__ import annotations
 
-import logging
 from typing import (Any, TYPE_CHECKING, TypeVar)
 
-import errors as err
+import custom_conf.errors as err
 
 
 if TYPE_CHECKING:
     from config import InstanceDescriptorMixin  # noqa: F401
 
-logger = logging.getLogger(__name__)
 CType = TypeVar("CType", bound="InstanceDescriptorMixin")
 
 
@@ -23,10 +21,10 @@ class Property:
     """ Base class for config properties. """
 
     def __init__(self, name: str, attr_type: type) -> None:
-        self.cls = None
-        self.name = name
-        self.attr = "__" + name
-        self.type = attr_type
+        self.cls: CType | None = None
+        self.name: str = name
+        self.attr: str = "__" + name
+        self.type: type = attr_type
 
     def __get__(self, obj: CType, objtype=None) -> Any:
         try:
@@ -39,14 +37,12 @@ class Property:
         setattr(obj, self.attr, value)
 
     def _raise_type_error(self, typ: type) -> None:
-        logger.error(f"Invalid config type for {self.name}. "
-                     f"Expected '{self.type}', got '{typ}' instead.")
-        raise err.InvalidPropertyTypeError
+        raise err.InvalidPropertyTypeError(self, typ)
 
     def _validate_type(self, value: Any) -> None:
         if isinstance(value, self.type):
             return
-        self._raise_type_error(type(value))
+        raise err.InvalidPropertyTypeError(self, type(value))
 
     def validate(self, value: Any) -> None:
         """ Check if there are any obvious errors with the value. """

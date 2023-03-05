@@ -3,8 +3,8 @@ from __future__ import annotations
 from types import UnionType
 from typing import Any, get_args, get_origin, Iterable, Union
 
-import errors as err
-from properties.property import Property
+import custom_conf.errors as err
+from custom_conf.properties.property import Property
 
 
 # TODO: This needs more explaining.
@@ -50,7 +50,7 @@ class NestedTypeProperty(Property):
         try:
             self._validate_generic_type(value, self.type)
         except err.InvalidPropertyTypeError:
-            self._raise_type_error(value_to_generic(value))
+            raise err.InvalidPropertyTypeError(self, type(value))
 
     def _validate_generic_type(self, value: Any, typ: type) -> None:
         # TODO: Document this properly.

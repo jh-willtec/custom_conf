@@ -4,9 +4,9 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
-import errors as err
-from properties.property import Property
-from reader import read_yaml
+import custom_conf.errors as err
+from custom_conf.properties.property import Property
+from custom_conf.reader import read_yaml
 
 
 logger = logging.getLogger(__name__)
@@ -43,19 +43,21 @@ def list_configs(directory: Path) -> list[Path]:
 
 
 class BaseConfig(InstanceDescriptorMixin):
-    def __init__(self) -> None:
+    def __init__(self, load_default=False, load_all=False) -> None:
         self._create_config_dir()
-        self._properties = []
+        self.properties = []
         self._initialize_config_properties()
         # Always load default config first, before loading any custom config
         # or program parameters.
-        self.load_default_config()
-        self.load_configs(self.config_dir)
+        if load_default:
+            self.load_default_config()
+        if load_all:
+            self.load_configs(self.config_dir)
 
     def _register_properties(self) -> None:
         for var in vars(self):
-            prop = getattr(self, var)
-            if not isinstance(Property, prop):
+            prop = object.__getattribute__(self, var)
+            if not isinstance(prop, Property):
                 continue
             prop.register(self)
 
@@ -138,7 +140,7 @@ class BaseConfig(InstanceDescriptorMixin):
             try:
                 if key not in self.properties:
                     logger.error(f"Invalid config key: {key}")
-                    raise err.UnknownPropertyError
+                    raise err.UnknownPropertyError(key, value)
                 setattr(self, key, value)
             except err.PropertyError:
                 valid = False
@@ -163,7 +165,7 @@ class BaseConfig(InstanceDescriptorMixin):
 
     @property
     @abstractmethod
-    def config_path(self) -> Path:
+    def config_dir(self) -> Path:
         pass
 
     @property
