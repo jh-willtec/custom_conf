@@ -18,6 +18,27 @@ class PropertyError(Exception):
     pass
 
 
+class MismatchedPropertyNameError(PropertyError):
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when the name used for a property and the variable
+        name in the config of the same property are different.
+
+        :keyword prop: The property that was created.
+        :type prop: Property
+        :keyword name: The name that is used in the Config.
+        :type name: str
+        """
+        if "prop" not in kwargs or "name" not in kwargs:
+            super().__init__()
+            return
+        prop_name = kwargs["prop"].name
+        name = kwargs["name"]
+        msg = (f"The property with the name '{prop_name}' is used "
+               f"for the configuration key '{name}'. Property name and "
+               f"config instance variable names have to be the equal.")
+        super().__init__(msg)
+
+
 class InvalidPropertyTypeError(PropertyError):
     """ Raised, if the type of a value differs from the properties type. """
     def __init__(self, prop: P = None, value_type: type = None) -> None:

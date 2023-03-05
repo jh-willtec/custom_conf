@@ -59,6 +59,8 @@ class BaseConfig(InstanceDescriptorMixin):
             prop = object.__getattribute__(self, var)
             if not isinstance(prop, Property):
                 continue
+            if var != prop.name:
+                raise err.MismatchedPropertyNameError(prop=prop, name=var)
             prop.register(self)
 
     def _initialize_config_properties(self) -> None:
