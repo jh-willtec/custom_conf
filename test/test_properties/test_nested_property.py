@@ -3,16 +3,17 @@ from unittest import TestCase
 from custom_conf.properties.nested_property import (
     IntListProperty, NestedTypeProperty)
 import custom_conf.errors as err
+
 from test.utils import TestConfig
 
 
 class NestedConfig(TestConfig):
     def _initialize_config_properties(self) -> None:
-        self.list_prop1 = NestedTypeProperty("n1", list[int])
+        self.list_prop1 = NestedTypeProperty("list_prop1", list[int])
         # No need to explicitely test IntListProperty,
         # as it is only a shorthand for the above.
-        self.list_prop2 = IntListProperty("list1")
-        self.dict_prop = NestedTypeProperty("n2", dict[str: int])
+        self.list_prop2 = IntListProperty("list_prop2")
+        self.dict_prop = NestedTypeProperty("dict_prop", dict[str: int])
         super()._initialize_config_properties()
 
 

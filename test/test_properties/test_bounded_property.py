@@ -11,7 +11,7 @@ class BoundedConfig(TestConfig):
     def _initialize_config_properties(self) -> None:
         self.bp1 = BoundedProperty("bp1", str, "b", "y")
         self.fbp = FloatBoundedProperty("fbp", -1.0, 30.)
-        self.ibp = IntBoundedProperty("fbp", upper=30)
+        self.ibp = IntBoundedProperty("ibp", upper=30)
         super()._initialize_config_properties()
 
 
