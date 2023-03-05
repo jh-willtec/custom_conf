@@ -1,23 +1,13 @@
-from pathlib import Path
 from unittest import TestCase
 
-from custom_conf.config import BaseConfig
 import custom_conf.errors as err
 from custom_conf.properties.bounded_property import (
     BoundedProperty, FloatBoundedProperty, IntBoundedProperty)
 
-from test import TEST_DIR
+from test.utils import TestConfig
 
 
-class BoundedConfig(BaseConfig):
-    @property
-    def config_dir(self) -> Path:
-        return TEST_DIR
-
-    @property
-    def default_config_path(self) -> Path:
-        return self.config_dir.joinpath()
-
+class BoundedConfig(TestConfig):
     def _initialize_config_properties(self) -> None:
         self.bp1 = BoundedProperty("bp1", str, "b", "y")
         self.fbp = FloatBoundedProperty("fbp", -1.0, 30.)

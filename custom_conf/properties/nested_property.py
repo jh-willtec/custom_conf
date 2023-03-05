@@ -123,4 +123,5 @@ class NestedTypeProperty(Property):
 
 
 class IntListProperty(NestedTypeProperty):
-    pass
+    def __init__(self, attr) -> None:
+        super().__init__(attr, list[int])
