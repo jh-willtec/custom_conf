@@ -1,6 +1,15 @@
+# Python/IDE
 .idea/
+**/venv/
 **/__pycache__/
 *.pyc
 
 **/build/
-**/*.egg-info
+**/*.egg-info/
+
+# Pycrunch config
+.pycrunch-config.yaml
+**/.pytest_cache/
+
+# Coverage report
+.coverage
