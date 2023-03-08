@@ -7,7 +7,30 @@ INVALID_CONFIG_EXIT_CODE = 1
 #  instance, to make them available to error handling.
 
 
-class PropertyError(Exception):
+class CustomConfError(Exception):
+    """ Base class for any custom exceptions raised by custom_conf. """
+    pass
+
+
+class ConfigError(CustomConfError):
+    """ Base class for exceptions raised by the config. """
+    pass
+
+
+class AddAfterInitError(ConfigError):
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when a new property is added to the configuration, after
+        the config was initialized.
+
+        :keyword name: The name of the property.
+        :type name: str
+        """
+        infix = f", with name '{kwargs['name']}'," if "name" in kwargs else ""
+        super().__init__(
+            f"Tried adding a new property{infix} to the configuration.")
+
+
+class PropertyError(CustomConfError):
     """ Base class for exceptions raised by properties. """
     pass
 

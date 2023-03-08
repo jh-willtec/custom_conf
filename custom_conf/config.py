@@ -46,6 +46,7 @@ def list_configs(directory: Path) -> list[Path]:
 class BaseConfig(InstanceDescriptorMixin):
     """ Basic config without any properties. """
     def __init__(self, load_default=False, load_all=False) -> None:
+        self._initialized = False
         self._create_config_dir()
         self.properties = []
         self._initialize_config_properties()
@@ -55,6 +56,22 @@ class BaseConfig(InstanceDescriptorMixin):
             self.load_default_config()
         if load_all:
             self.load_configs(self.config_dir)
+
+    @property
+    def initialized(self) -> bool:
+        try:
+            return self._initialized
+        except AttributeError:
+            return False
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        # Disallow adding new (unknown) properties after initialization.
+        if self.initialized and isinstance(value, Property):
+            try:
+                object.__getattribute__(self, name)
+            except AttributeError:
+                raise err.AddAfterInitError(name=name)
+        super().__setattr__(name, value)
 
     def _register_properties(self) -> None:
         for var in vars(self):
@@ -67,6 +84,7 @@ class BaseConfig(InstanceDescriptorMixin):
 
     def _initialize_config_properties(self) -> None:
         self._register_properties()
+        self._initialized = True
 
     def load_default_config(self) -> None:
         """ Loads the default configuration.
