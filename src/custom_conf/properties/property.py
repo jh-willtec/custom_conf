@@ -12,7 +12,7 @@ import custom_conf.errors as err
 
 
 if TYPE_CHECKING:
-    from config import InstanceDescriptorMixin  # noqa: F401
+    from custom_conf.config import InstanceDescriptorMixin  # noqa: F401
 
 CType = TypeVar("CType", bound="InstanceDescriptorMixin")
 

@@ -1,1 +1,4 @@
+PyYAML ~= 6.0
+
+# Install custom-conf in editable/development mode
 -e .
