@@ -51,4 +51,4 @@ class Property:
     def register(self, cls: CType) -> None:
         """ Ensure the instance using this property knows of its existence. """
         self.cls = cls
-        self.cls.properties.append(self)
+        self.cls.properties.append(self.name)
