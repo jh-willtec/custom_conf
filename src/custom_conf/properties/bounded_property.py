@@ -18,7 +18,6 @@ class BoundedProperty(Property):
 
     def _validate_init_values(self) -> None:
         """ Check if the given bounds and type are valid bound values. """
-        # TODO: Allow types to be converted?
         # Check at least one of lower/upper is given.
         lower_exists = self.lower is not None
         upper_exists = self.upper is not None

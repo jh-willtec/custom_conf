@@ -15,7 +15,6 @@ def read_yaml(path: Path) -> tuple[dict[str, Any], bool]:
     :param path: The path of the .yml/.yaml file that should be read.
     :return: The data contained in the file and whether reading was a success.
     """
-    # TODO: This should raise an error instead of writing a log message.
     try:
         with open(path, encoding="utf-8") as config_file:
             return safe_load(config_file), True

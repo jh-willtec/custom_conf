@@ -3,8 +3,6 @@ from typing import Any
 
 
 INVALID_CONFIG_EXIT_CODE = 1
-# TODO: Bind the arguments the exceptions were called with to the
-#  instance, to make them available to error handling.
 
 
 class CustomConfError(Exception):
@@ -101,7 +99,6 @@ class MissingRequiredPropertyError(PropertyError):
             super().__init__()
             return
         prop = kwargs["prop"]
-        # TODO: Make a difference between Missing and QueryBeforeSet?
         msg = (f"The property '{prop.name}' was not set before it was first "
                f"queried, even though it is a required property.")
         super().__init__(msg)

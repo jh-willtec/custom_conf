@@ -7,7 +7,6 @@ import custom_conf.errors as err
 from custom_conf.properties.property import Property
 
 
-# TODO: This needs more explaining.
 def value_to_generic(base_value: Any) -> type:
     """ Returns the generic type of a given value. """
 
@@ -53,7 +52,6 @@ class NestedTypeProperty(Property):
             raise err.InvalidPropertyTypeError(prop=self, type=type(value))
 
     def _validate_generic_type(self, value: Any, typ: type) -> None:
-        # TODO: Document this properly.
         if typ is None:
             return
         origin = get_origin(typ)
