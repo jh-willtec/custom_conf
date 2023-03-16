@@ -157,13 +157,12 @@ class BaseConfig(InstanceDescriptorMixin):
 
     def _validate_no_invalid_properties(self, data: dict[str: Any]) -> bool:
         valid = True
-        for key, value in data.items():
+        for name, value in data.items():
             # Even if an item is invalid, continue reading to find all errors.
             try:
-                if key not in self.properties:
-                    logger.error(f"Invalid config key: {key}")
-                    raise err.UnknownPropertyError(name=key, value=value)
-                setattr(self, key, value)
+                if name not in self.properties:
+                    raise err.UnknownPropertyError(name=name, value=value)
+                setattr(self, name, value)
             except err.PropertyError:
                 valid = False
         return valid
