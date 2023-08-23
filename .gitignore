@@ -13,3 +13,5 @@
 
 # Coverage report
 .coverage
+
+venv/
