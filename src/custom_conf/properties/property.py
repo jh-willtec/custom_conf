@@ -12,9 +12,9 @@ import custom_conf.errors as err
 
 
 if TYPE_CHECKING:
-    from custom_conf.config import InstanceDescriptorMixin  # noqa: F401
+    from custom_conf.config import BaseConfig  # noqa: F401
 
-CType = TypeVar("CType", bound="InstanceDescriptorMixin")
+CType = TypeVar("CType", bound="BaseConfig")
 
 
 class Property:
@@ -30,7 +30,9 @@ class Property:
         try:
             return getattr(obj, self.attr)
         except AttributeError:
-            raise err.MissingRequiredPropertyError(prop=self)
+            if obj.initialized:
+                raise err.MissingRequiredPropertyError(prop=self)
+            raise err.QueriedBeforeSetError(prop=self)
 
     def __set__(self, obj, value: Any):
         self.validate(value)

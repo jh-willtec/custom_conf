@@ -128,8 +128,17 @@ class MissingRequiredPropertyError(PropertyError):
         if "prop" not in kwargs:
             super().__init__()
             return
-        msg = (f"The property '{self.prop.name}' was not set before it was "
-               f"first queried, even though it is a required property.")
+        msg = (f"The property '{self.prop.name}' was not set during the "
+               f"initialization, even though it is a required property.")
+        super().__init__(msg)
+
+
+class QueriedBeforeSetError(PropertyError):
+    def __init__(self, **kwargs) -> None:
+        """"""
+        self.prop = kwargs.get("prop")
+        msg = (f"The property '{self.prop.name}' was queried "
+               f"before it was assigned a value.")
         super().__init__(msg)
 
 
