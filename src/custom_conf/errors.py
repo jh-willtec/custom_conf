@@ -75,6 +75,25 @@ class InvalidPropertyTypeError(PropertyError):
         super().__init__(msg)
 
 
+class InvalidCoercionError(PropertyError):
+    def __init__(self, **kwargs) -> None:
+        self.prop = kwargs.pop("prop")
+        self.value = kwargs.pop("value")
+        msg = (f"Could not cleanly coerce the value '{self.value}' "
+               f"of type '{type(self.value)}' to type '{self.prop.type}' "
+               f"for property '{self.prop.name}'.")
+        super().__init__(msg)
+
+
+class LossOfPrecisionError(PropertyError):
+    def __init__(self, **kwargs) -> None:
+        self.type = kwargs.pop("type")
+        self.value = kwargs.pop("value")
+        msg = (f"Coercion of '{self.value}' to type "
+               f"'{self.type}' would reduce precision.")
+        super().__init__(msg)
+
+
 class NotATypeError(PropertyError):
     def __init__(self, **kwargs) -> None:
         """
