@@ -24,9 +24,8 @@ class TestFloatBoundedPropert(TestCase):
         # Invalid type.
         with self.assertRaises(err.InvalidPropertyTypeError):
             c.fbp = "a"
-        # Convertible types still don't work.
-        with self.assertRaises(err.InvalidPropertyTypeError):
-            c.fbp = int(3)
+        # Coercible types work.
+        c.fbp = int(3)
         # Out of bounds.
         with self.assertRaises(err.OutOfBoundsPropertyError):
             c.fbp = -1.1
@@ -49,9 +48,8 @@ class TestIntFloatBoundedProperty(TestCase):
         # Invalid type.
         with self.assertRaises(err.InvalidPropertyTypeError):
             c.ibp = "a"
-        # Convertible types still don't work.
-        with self.assertRaises(err.InvalidPropertyTypeError):
-            c.ibp = float(3)
+        # Coercible types work.
+        c.ibp = float(3)
         # Out of bounds.
         with self.assertRaises(err.OutOfBoundsPropertyError):
             c.ibp = 33

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import abc
-from typing import Any
+from typing import Any, Optional, Type
 
 import custom_conf.errors as err
 from custom_conf.properties.coercible_property import (
@@ -49,9 +49,10 @@ class BoundedProperty(Property, abc.ABC):
         self._upper.__set__(self, value)
 
     def _initialize_bounds(
-            self, lower: Property | None, upper: Property | None) -> None:
-        self._lower = lower
-        self._upper = upper
+            self, prop: Optional[Type[Property]], *args) -> None:
+        self._lower = prop("_lower", *args) if prop else prop
+        self._upper = prop("_upper", *args) if prop else prop
+        self._value = prop("_value", *args) if prop else prop
 
     def _validate_within_bounds(self, value: Any):
         """ Check if the given value is between the bounds. """
@@ -65,12 +66,21 @@ class BoundedProperty(Property, abc.ABC):
         super().validate(value)
         self._validate_within_bounds(value)
 
+    def __set__(self, obj, value: Any):
+        try:
+            self._value.__set__(self, value)
+            # noinspection PyTypeChecker
+            value = self._value.__get__(self)
+        except err.PropertyError:
+            raise err.InvalidPropertyTypeError(prop=self, type=type(value))
+        super().__set__(obj, value)
+
 
 class FloatBoundedProperty(BoundedProperty):
     """ Bounded property of type float. """
 
     def __init__(self, name, lower: float = None, upper: float = None) -> None:
-        self._initialize_bounds(FloatProperty("lower"), FloatProperty("upper"))
+        self._initialize_bounds(FloatProperty)
         super().__init__(name, float, lower, upper)
 
 
@@ -78,5 +88,5 @@ class IntBoundedProperty(BoundedProperty):
     """ Bounded property of type int. """
 
     def __init__(self, name, lower: int = None, upper: int = None) -> None:
-        self._initialize_bounds(IntProperty("lower"), IntProperty("upper"))
+        self._initialize_bounds(IntProperty)
         super().__init__(name, int, lower, upper)
