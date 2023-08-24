@@ -20,4 +20,4 @@ def read_yaml(path: Path) -> tuple[dict[str, Any], bool]:
         with open(path, encoding="utf-8") as config_file:
             return safe_load(config_file), True
     except (ScannerError, YAMLError) as error:
-        raise err.ConfigReadError(path) from error
+        raise err.ConfigReaderError(path=path) from error
