@@ -10,6 +10,14 @@ class CustomConfError(Exception):
     pass
 
 
+class ConfigReaderError(CustomConfError):
+    """ Base class for exceptions that occur when reading a configuration. """
+    def __init__(self, **kwargs) -> None:
+        self.path = kwargs.pop("path")
+        msg = f"Could not read the configuration at '{self.path}'."
+        super().__init__(msg)
+
+
 class ConfigError(CustomConfError):
     """ Base class for exceptions raised by the config. """
     pass
