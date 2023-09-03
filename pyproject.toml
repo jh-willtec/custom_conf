@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "custom_conf"
-version = "0.1.0"
+version = "0.2.0-alpha"
 description = "A Python library for managing configuration files with type validation and range checks."
 readme = "README.md"
 license = "Apache-2.0"
@@ -20,6 +20,7 @@ repository = "https://github.com/heijul/custom_conf"
 keywords = ["config", "configuration", "instance descriptors"]
 
 [tool.poetry.dependencies]
+python = "^3.10"
 PyYAML = "^6.0"
 
 [tool.poetry.group.dev.dependencies]
