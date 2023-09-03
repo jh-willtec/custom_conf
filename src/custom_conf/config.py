@@ -196,6 +196,12 @@ class BaseConfig(InstanceDescriptorMixin):
         """ Return the path to the default configuration. """
         pass
 
+    @property
+    @abstractmethod
+    def source_dir(self) -> Path:
+        """ Return the path to the source directory. """
+        pass
+
     def _create_config_dir(self) -> None:
         if self.config_dir.exists():
             return
