@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import (Any, TYPE_CHECKING, TypeVar)
 
+from typeguard import check_type, TypeCheckError
+
 import custom_conf.errors as err
 
 
@@ -42,9 +44,10 @@ class Property:
         raise err.InvalidPropertyTypeError(prop=self, type=typ)
 
     def _validate_type(self, value: Any) -> None:
-        if isinstance(value, self.type):
-            return
-        raise err.InvalidPropertyTypeError(prop=self, type=type(value))
+        try:
+            check_type(value, self.type)
+        except TypeCheckError:
+            raise err.InvalidPropertyTypeError(prop=self, type=type(value))
 
     def validate(self, value: Any) -> None:
         """ Check if there are any obvious errors with the value. """

@@ -155,7 +155,7 @@ class BaseConfig(InstanceDescriptorMixin):
                 continue
             setattr(self, name, value)
 
-    def _validate_no_invalid_properties(self, data: dict[str: Any]) -> bool:
+    def _validate_no_invalid_properties(self, data: dict[str, Any]) -> bool:
         valid = True
         for name, value in data.items():
             # Even if an item is invalid, continue reading to find all errors.
