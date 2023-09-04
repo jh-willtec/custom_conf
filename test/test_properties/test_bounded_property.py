@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import custom_conf.errors as err
 from custom_conf.properties.bounded_property import (
-    BoundedProperty, FloatBoundedProperty, IntBoundedProperty)
+    FloatBoundedProperty, IntBoundedProperty)
 
 from test.utils import TestConfig
 
