@@ -14,3 +14,7 @@ class TestConfig(BaseConfig):
     @property
     def default_config_path(self) -> Path:
         return self.config_dir.joinpath()
+
+    @property
+    def source_dir(self) -> Path:
+        return TEST_DIR.parents[1] / "src/custom_conf"
