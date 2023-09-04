@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "custom_conf"
-version = "0.2.0a1"
+version = "0.2.0"
 description = "A Python library for managing configuration files with type validation and range checks."
 readme = "README.md"
 license = "Apache-2.0"
