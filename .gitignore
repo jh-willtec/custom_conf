@@ -14,4 +14,8 @@
 # Coverage report
 .coverage
 
+venv
 venv/
+
+# Poetry
+poetry.lock
