@@ -1,6 +1,7 @@
 """ Exceptions raised by properties. """
 from typing import Any
 
+from custom_conf.properties.choices_property import ChoicesProperty
 
 INVALID_CONFIG_EXIT_CODE = 1
 
@@ -264,3 +265,27 @@ class InvalidBoundOrderError(PropertyError):
             return
         super().__init__(f"The lower bound of the '{self.name}' "
                          f"property is greater or equal to the upper bound.")
+
+
+class InvalidChoiceError(PropertyError):
+    def __init__(self, **kwargs) -> None:
+        """ Raised, when a value is set that is not a valid choice. """
+        self.name = kwargs.get("name")
+        self.value = kwargs.get("value")
+        self.choices = kwargs.get("choices")
+        if any(map(lambda x: x not in kwargs, ["name", "value", "choices"])):
+            super().__init__()
+            return
+        super().__init__(f"The value {self.value} is not a valid choice. ({self.choices})")
+
+
+class InvalidChoicesTypeError(PropertyError):
+    # TODO: Check if using a prop here instead of kwargs like with the others raises some issues.
+    def __init__(self, prop: ChoicesProperty | None = None) -> None:
+        """ Raised, when the given choices are not of the correct type. """
+        if not prop:
+            super().__init__()
+            return
+        types = [f"{a}: {type(a)}" for a in prop.choices]
+        super().__init__(f"At least one of the given choices ({types}) of the property "
+                         f"'{prop.name}' is not of the correct type '{prop.type}'.")
