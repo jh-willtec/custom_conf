@@ -1,5 +1,5 @@
 import logging
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
@@ -43,7 +43,7 @@ def list_configs(directory: Path) -> list[Path]:
     return list(directory.glob("*.yaml")) + list(directory.glob("*.yml"))
 
 
-class BaseConfig(InstanceDescriptorMixin):
+class BaseConfig(InstanceDescriptorMixin, ABC):
     """ Basic config without any properties. """
     def __init__(self, load_default=False, load_all=False) -> None:
         self._initialized = False
@@ -216,7 +216,7 @@ class BaseConfig(InstanceDescriptorMixin):
 
         base_string = "\nCurrent configuration: [\n{}\n]"
 
-        property_names = self.properties + ["base_path", "default_config_path"]
+        property_names = self.properties + ["config_dir", "source_dir", "default_config_path"]
         max_name_len = max(len(name) for name in property_names)
 
         # This can only fail if some properties are missing. However, in
