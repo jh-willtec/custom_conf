@@ -86,7 +86,12 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
                 raise err.MismatchedPropertyNameError(prop=prop, name=var)
             prop.register(self)
 
+    @abstractmethod
     def _initialize_config_properties(self) -> None:
+        pass
+
+    def initialize_config_properties(self) -> None:
+        self._initialize_config_properties()
         self._register_properties()
         self._initialized = True
 
