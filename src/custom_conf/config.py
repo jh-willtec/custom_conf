@@ -1,6 +1,8 @@
 import logging
+import platform
 from abc import abstractmethod, ABC
 from argparse import Namespace
+from os import path
 from pathlib import Path
 from typing import Any
 
@@ -45,8 +47,10 @@ def list_configs(directory: Path) -> list[Path]:
 
 class BaseConfig(InstanceDescriptorMixin, ABC):
     """ Basic config without any properties. """
-    def __init__(self, load_default=False, load_all=False) -> None:
+    def __init__(self, program_name: str, load_default=False, load_all=False) -> None:
+        self.program_name = program_name
         self._initialized = False
+        self._config_dir = None
         self._create_config_dir()
         self.properties = []
         self._initialize_config_properties()
@@ -185,10 +189,19 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
         return True
 
     @property
-    @abstractmethod
     def config_dir(self) -> Path:
         """ The path to the directory, which holds additional config files. """
-        pass
+        if not self._config_dir:
+            if (system := platform.system().lower()) == "windows":
+                config_dir = Path(path.expandvars("%PROGRAMDATA%"))
+            elif system == "linux":
+                config_dir = Path("~/.config").expanduser()
+            else:
+                logging.error(f"Only Linux and Windows are supported, not {system}.")
+                exit(1)
+            self._config_dir = config_dir / self.program_name
+        return self._config_dir
+
 
     @property
     @abstractmethod
@@ -216,12 +229,13 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
 
         base_string = "\nCurrent configuration: [\n{}\n]"
 
-        property_names = self.properties + ["config_dir", "source_dir", "default_config_path"]
-        max_name_len = max(len(name) for name in property_names)
+        custom_settings = ["program_name", "config_dir", "source_dir", "default_config_path"]
+        names = self.properties + custom_settings
+        max_name_len = max(len(name) for name in names)
 
         # This can only fail if some properties are missing. However, in
         # that case we have already quit.
         prop_strings = [_get_property_string(name, getattr(self, name))
-                        for name in property_names]
+                        for name in names]
 
         return base_string.format("\n".join(prop_strings))
