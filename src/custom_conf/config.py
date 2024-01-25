@@ -53,7 +53,7 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
         self._config_dir = None
         self._create_config_dir()
         self.properties = []
-        self._initialize_config_properties()
+        self.initialize_config_properties()
         # Always load default config first, before loading any custom config
         # or program parameters.
         if load_default:
