@@ -1,8 +1,8 @@
 import logging
+import os
 import platform
 from abc import abstractmethod, ABC
 from argparse import Namespace
-from os import path
 from pathlib import Path
 from typing import Any
 
@@ -198,7 +198,7 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
         """ The path to the directory, which holds additional config files. """
         if not self._config_dir:
             if (system := platform.system().lower()) == "windows":
-                config_dir = Path(path.expandvars("%PROGRAMDATA%"))
+                config_dir = Path(os.path.expandvars("%PROGRAMDATA%"))
             elif system == "linux":
                 config_dir = Path("~/.config").expanduser()
             else:
@@ -206,7 +206,6 @@ class BaseConfig(InstanceDescriptorMixin, ABC):
                 exit(1)
             self._config_dir = config_dir / self.program_name
         return self._config_dir
-
 
     @property
     @abstractmethod
