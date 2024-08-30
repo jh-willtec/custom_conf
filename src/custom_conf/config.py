@@ -10,7 +10,6 @@ import custom_conf.errors as err
 from custom_conf.properties.property import Property
 from custom_conf.reader import read_yaml
 
-
 logger = logging.getLogger(__name__)
 
 

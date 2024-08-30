@@ -12,7 +12,6 @@ from typeguard import check_type, TypeCheckError
 
 import custom_conf.errors as err
 
-
 if TYPE_CHECKING:
     from custom_conf.config import BaseConfig  # noqa: F401
 

@@ -1,7 +1,7 @@
 from typing import Any
 
-from custom_conf.properties.property import Property
 import custom_conf.errors as err
+from custom_conf.properties.property import Property
 
 
 class ChoicesProperty(Property):
